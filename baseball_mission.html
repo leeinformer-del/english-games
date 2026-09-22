@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baseball Mission</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:24px;background:#f7f7f7;color:#111}
+.wrap{max-width:760px;margin:auto}
+h1{font-size:28px;margin-bottom:8px}.sub{color:#555;margin-bottom:22px}
+.screen{display:none;background:white;border:1px solid #ddd;border-radius:16px;padding:24px}
+.screen.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+button{min-height:52px;padding:10px 14px;border:1px solid #ccc;border-radius:12px;background:#fafafa;font-size:16px;cursor:pointer}
+button:hover{background:#eee}.selected{outline:3px solid #333;background:#eee}
+.next{width:100%;margin-top:20px;background:#111;color:white}.next:disabled{opacity:.35;cursor:not-allowed}
+.result{margin-top:16px;font-weight:bold;min-height:24px}
+.progress{height:8px;background:#ddd;border-radius:8px;margin-bottom:20px;overflow:hidden}
+.bar{height:100%;background:#111;width:25%;transition:.2s}
+.bag{min-height:60px;border:1px dashed #aaa;border-radius:12px;padding:12px;margin:14px 0;display:flex;gap:8px;flex-wrap:wrap}
+.tag{border:1px solid #ccc;border-radius:8px;padding:8px 12px}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}body{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>⚾ Baseball Mission</h1>
+<div class="sub">Think → Choose → Speak</div>
+<div class="progress"><div id="bar" class="bar"></div></div>
+
+<section class="screen active" id="s1">
+<h2>Mission 1: Who Has It?</h2>
+<p>Choose a person, then choose the baseball item.</p>
+<div class="grid" id="people"></div>
+<div style="height:14px"></div>
+<div class="grid" id="items"></div>
+<div class="result" id="r1">Choose a person first.</div>
+<button class="next" id="n1" disabled>Next Mission</button>
+</section>
+
+<section class="screen" id="s2">
+<h2>Mission 2: What Do You Need?</h2>
+<p id="situation"></p>
+<div class="grid" id="choices"></div>
+<div class="result" id="r2"></div>
+<button class="next" id="n2" disabled>Next Mission</button>
+</section>
+
+<section class="screen" id="s3">
+<h2>Mission 3: Build Your Baseball Bag</h2>
+<p>Choose TWO things for your baseball bag.</p>
+<div class="grid" id="bagChoices"></div>
+<div class="bag" id="bag"></div>
+<div class="result" id="r3">Choose two items.</div>
+<button class="next" id="n3" disabled>Personal Speaking</button>
+</section>
+
+<section class="screen" id="s4">
+<h2>Personal Speaking</h2>
+<p>Now talk about yourself.</p>
+<div style="display:grid;gap:12px">
+<div class="tag">1. What sport do you like?</div>
+<div class="tag">2. What do you need to play it?</div>
+<div class="tag">3. Who do you play with?</div>
+<div class="tag">4. Why do you like it?</div>
+</div>
+<p style="margin-top:20px"><b>Teacher:</b> Encourage longer answers with “Why?” or “Tell me more.”</p>
+<button class="next" onclick="location.reload()">Restart Mission</button>
+</section>
+</div>
+
+<script>
+const people=["Don","Bill","Kate","Len","Jun","Me"];
+const items=["Glove","Bat","Cap","Helmet","Uniform","Baseball"];
+const correct={Don:"Glove",Bill:"Bat",Kate:"Cap",Len:"Helmet",Jun:"Uniform",Me:"Baseball"};
+let person=null,matches=0,stage=0,si=0,bag=[];
+
+function buttons(arr,box,fn){
+ box.innerHTML="";
+ arr.forEach(x=>{
+  const b=document.createElement("button"); b.textContent=x;
+  b.onclick=()=>fn(b,x); box.appendChild(b);
+ });
+}
+buttons(people,document.getElementById("people"),(b,x)=>{
+ document.querySelectorAll("#people button").forEach(q=>q.classList.remove("selected"));
+ b.classList.add("selected"); person=x;
+ document.getElementById("r1").textContent="Now choose the item.";
+});
+buttons(items,document.getElementById("items"),(b,x)=>{
+ if(!person){document.getElementById("r1").textContent="Choose a person first.";return}
+ if(correct[person]===x){
+  b.disabled=true; b.classList.add("selected");
+  document.getElementById("r1").textContent=`Correct! ${person} has the ${x.toLowerCase()}.`;
+  matches++; document.querySelector(`#people button.selected`).disabled=true; person=null;
+  if(matches===6)document.getElementById("n1").disabled=false;
+ }else document.getElementById("r1").textContent="Try again. Think about the reading.";
+});
+
+const situations=[
+ ["You want to catch the ball. What do you need?","Glove"],
+ ["You want to hit the ball. What do you need?","Bat"],
+ ["It’s sunny. What do you need?","Cap"]
+];
+function renderSituation(){
+ document.getElementById("situation").textContent=situations[si][0];
+ document.getElementById("n2").disabled=true;
+ buttons(items,document.getElementById("choices"),(b,x)=>{
+  if(x===situations[si][1]){
+   document.getElementById("r2").textContent="Correct! Now ask: Why do you need it?";
+   document.getElementById("n2").disabled=false;
+  }else document.getElementById("r2").textContent="Try again. Think about the situation.";
+ });
+}
+renderSituation();
+
+buttons(items,document.getElementById("bagChoices"),(b,x)=>{
+ if(bag.includes(x)||bag.length>=2)return;
+ bag.push(x);b.classList.add("selected");
+ const tag=document.createElement("span");tag.className="tag";tag.textContent=x;
+ document.getElementById("bag").appendChild(tag);
+ document.getElementById("r3").textContent=bag.length===2?"Great! Ask: Why do you need them?":"Choose one more item.";
+ if(bag.length===2)document.getElementById("n3").disabled=false;
+});
+
+function show(n){
+ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+ document.getElementById("s"+n).classList.add("active");
+ document.getElementById("bar").style.width=(n*25)+"%";
+}
+document.getElementById("n1").onclick=()=>{stage=2;show(2)};
+document.getElementById("n2").onclick=()=>{si++;if(si<situations.length)renderSituation();else show(3)};
+document.getElementById("n3").onclick=()=>show(4);
+</script>
+</body>
+</html>
