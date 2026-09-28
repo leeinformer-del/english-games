@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seasons & Birthday Speaking Game</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f6fb;color:#172033;font-family:Arial,Helvetica,sans-serif}
+.app{max-width:1180px;margin:18px auto;padding:16px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:clamp(26px,4vw,38px);margin:0}.muted{color:#64748b;margin-top:5px}.score{background:#fff;border-radius:16px;padding:12px 17px;font-weight:700;box-shadow:0 4px 18px #17203312}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tab,button{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:12px;padding:11px 15px}.tab{background:#e5eaf1;color:#334155}.tab.active{background:#16834c;color:white}
+.panel{background:white;border:3px solid #dceee3;border-radius:22px;padding:clamp(13px,2.5vw,22px);box-shadow:0 8px 24px #1720330c}
+.prompt{background:#fff5df;border-radius:13px;padding:10px 14px;text-align:center;font-size:clamp(16px,2vw,20px);font-weight:700;line-height:1.35;margin-top:12px}
+.hint{font-size:14px;color:#64748b;font-weight:500;margin-top:4px}
+.feedback{text-align:center;min-height:28px;margin-top:10px;font-weight:700;font-size:17px}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.primary{background:#16834c;color:white}.secondary{background:#e7edf4;color:#243449}
+.photo{width:100%;height:clamp(310px,48vw,520px);object-fit:cover;border-radius:16px;background:#dbeafe;display:block}
+.season-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(230px,.8fr);gap:15px;align-items:stretch}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choice{padding:0;overflow:hidden;background:#f8fafc;border:3px solid transparent;color:#172033}
+.choice img{width:100%;height:clamp(100px,15vw,170px);object-fit:cover;display:block}.choice span{display:block;padding:9px 4px}
+.choice.selected{border-color:#2688d8}.choice.correct{border-color:#16a34a;background:#eaf8ef}.choice.wrong{border-color:#dc2626;background:#fff0f0}
+.weather-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr);gap:16px;align-items:stretch}
+.thermos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.temp-card{border:3px solid transparent;border-radius:15px;background:#f8fafc;padding:10px;display:flex;align-items:center;justify-content:center;gap:12px;min-height:130px;cursor:pointer}
+.temp-card.correct{border-color:#16a34a;background:#eaf8ef}.temp-card.wrong{border-color:#dc2626;background:#fff0f0}
+.temp-card b{font-size:19px}.thermometer{height:86px;width:28px;border:3px solid #9aa6b5;border-radius:15px 15px 7px 7px;position:relative;background:linear-gradient(to top,#e9eef4,#fff);display:flex;align-items:end;justify-content:center}
+.thermometer:after{content:"";position:absolute;width:14px;height:var(--fill);bottom:6px;border-radius:9px;background:var(--mercury)}
+.bulb{position:absolute;width:23px;height:23px;border-radius:50%;bottom:-11px;background:var(--mercury);border:2px solid white}
+.calendar-wrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr);gap:16px;align-items:center}
+.calendar{background:#fff;border:2px solid #d7dee8;border-radius:14px;padding:12px;box-shadow:0 5px 15px #17203312}
+.calendar-title{text-align:center;font-weight:800;font-size:20px;margin:2px 0 10px}.months{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.month{border:1px solid #d8dee8;border-radius:8px;padding:9px 4px;text-align:center;min-height:76px;background:#fbfcfe}
+.month strong{display:block;font-size:19px;margin:12px 0}.days{font-size:10px;letter-spacing:1px;color:#64748b}.month.marked{background:#ffe0e0;border:2px solid #e53935}.month.marked strong{color:#c62828}
+.season-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.season-option{padding:13px 5px;border:3px solid #e0e6ee;background:#fff}.season-option.correct{border-color:#16a34a;background:#eaf8ef}.season-option.wrong{border-color:#dc2626;background:#fff0f0}
+.monthgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.monthpick{background:#fff;border:2px solid #e0e6ee;padding:10px 4px}.monthpick.selected{border-color:#d88a00;background:#fff2d5}
+.follow-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr);gap:18px;align-items:center}.follow-photo{width:100%;height:clamp(280px,42vw,440px);object-fit:cover;border-radius:16px}
+@media(max-width:720px){.season-layout,.weather-layout,.calendar-wrap,.follow-layout{grid-template-columns:1fr}.photo{height:300px}.choice img{height:125px}.calendar{order:0}}
+</style></head>
+<body><main class="app">
+<header><div><h1>Seasons &amp; Birthday</h1><div class="muted">Look at the photos, think, and speak in a complete sentence.</div></div><div class="score">⭐ Score: <span id="score">0</span></div></header>
+<nav>
+<button class="tab active" data-m="0">Mission 1 · Seasons</button><button class="tab" data-m="1">Mission 2 · Weather</button><button class="tab" data-m="2">Mission 3 · Months</button><button class="tab" data-m="3">Mission 4 · Birthday</button>
+</nav><section class="panel" id="game"></section></main>
+<script>
+const IMG={
+ spring:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200&q=85",
+ summer:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=85",
+ fall:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=85",
+ winter:"https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=1200&q=85",
+ warm:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200&q=85",
+ hot:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=85",
+ cool:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=85",
+ cold:"https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=1200&q=85",
+ birthday:"https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=1200&q=85",
+ cake:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1200&q=85",
+ gift:"https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=1200&q=85",
+ party:"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1200&q=85"
+};
+IMG.fall="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=85";
+IMG.party="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1200&q=85";
+let mission=0,score=0,seasonIndex=0,weatherIndex=0,monthIndex=0,birthdayMonth="",followIndex=0;
+const game=document.getElementById("game");
+const seasonChoices=[["spring","Spring"],["summer","Summer"],["fall","Fall"],["winter","Winter"]];
+const seasonPrompts=[
+{q:"What season comes after winter?",a:"Spring",photo:"spring"},
+{q:"Which season is very hot?",a:"Summer",photo:"summer"},
+{q:"In which season do leaves turn orange and yellow?",a:"Fall",photo:"fall"},
+{q:"Which season has snow and very cold weather?",a:"Winter",photo:"winter"}
+];
+const seasonOrder=[...seasonPrompts].sort(()=>Math.random()-.5);
+const weatherPrompts=[
+{q:"How is the weather in spring?",a:"Warm",photo:"warm"},
+{q:"How is the weather on a very sunny summer day?",a:"Hot",photo:"hot"},
+{q:"How is the weather in fall?",a:"Cool",photo:"cool"},
+{q:"How is the weather in winter?",a:"Cold",photo:"cold"}
+];
+const weatherData=[["Warm","25°C",65,"#ef4444"],["Hot","35°C",90,"#ef4444"],["Cool","15°C",38,"#3b82f6"],["Cold","0°C",12,"#2563eb"]];
+const months=[["March","Spring"],["July","Summer"],["September","Fall"],["January","Winter"],["May","Spring"],["October","Fall"],["February","Winter"],["August","Summer"],["December","Winter"]];
+const monthNums=["January","February","March","April","May","June","July","August","September","October","November","December"];
+function img(k,alt,cls=""){return `<img class="${cls}" src="${IMG[k]}" alt="${alt}" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${k}/1000/650'">`}
+function scoreUp(){score+=10;document.getElementById("score").textContent=score}
+function tabs(){document.querySelectorAll(".tab").forEach((b,i)=>b.classList.toggle("active",i===mission))}
+function render(){tabs();if(mission===0)renderSeasons();if(mission===1)renderWeather();if(mission===2)renderMonths();if(mission===3)renderBirthday()}
+function nextMissionStep(){if(mission===0){seasonIndex++;renderSeasons()}else if(mission===1){weatherIndex++;renderWeather()}else if(mission===2){monthIndex++;renderMonths()}}
+function renderSeasons(){
+ const item=seasonOrder[seasonIndex%seasonOrder.length];
+ const shuffled=[...seasonChoices].sort(()=>Math.random()-.5);
+ game.innerHTML=`<div class="season-layout"><div>${img(item.photo,"Large realistic seasonal photograph","photo")}<div class="prompt">${item.q}<div class="hint">Teacher question · Say a complete sentence.</div></div></div><div class="choices">${shuffled.map(([k,l])=>`<button class="choice" data-answer="${l}">${img(k,l)}<span>${l}</span></button>`).join("")}</div></div><div class="feedback" id="feedback"></div><div class="actions"><button class="primary" id="next" disabled>Next →</button></div>`;
+ bindChoices(item.a,"It is "+item.a.toLowerCase()+".");
+ document.getElementById("next").onclick=()=>{seasonIndex++;renderSeasons()};
+}
+function bindChoices(answer,sentence){document.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{let f=document.getElementById("feedback");document.querySelectorAll("[data-answer]").forEach(x=>x.classList.remove("correct","wrong"));if(b.dataset.answer===answer){b.classList.add("correct");f.textContent="✓ Correct! "+sentence;scoreUp();document.getElementById("next").disabled=false}else{b.classList.add("wrong");f.textContent="Try again. Look at the photo carefully."}})}
+function renderWeather(){
+ const item=weatherPrompts[weatherIndex%4],order=[...weatherData].sort(()=>Math.random()-.5);
+ game.innerHTML=`<div class="weather-layout"><div>${img(item.photo,"Large weather photograph","photo")}<div class="prompt">${item.q}<div class="hint">Teacher question · Say: “It is ______.”</div></div></div><div class="thermos">${order.map(([w,t,h,c])=>`<button class="temp-card" data-weather="${w}"><div class="thermometer" style="--fill:${h}%;--mercury:${c}"><i class="bulb"></i></div><b>${w}<br><span style="color:${c}">${t}</span></b></button>`).join("")}</div></div><div class="feedback" id="feedback"></div><div class="actions"><button class="primary" id="next" disabled>Next →</button></div>`;
+ document.querySelectorAll("[data-weather]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-weather]").forEach(x=>x.classList.remove("correct","wrong"));let f=document.getElementById("feedback");if(b.dataset.weather===item.a){b.classList.add("correct");f.textContent="✓ Correct! It is "+item.a.toLowerCase()+".";scoreUp();document.getElementById("next").disabled=false}else{b.classList.add("wrong");f.textContent="Try again. Check the temperature."}});
+ document.getElementById("next").onclick=()=>{weatherIndex++;renderWeather()};
+}
+function markedMonths(season){if(season==="Spring")return [2,3,4];if(season==="Summer")return [5,6,7];if(season==="Fall")return [8,9,10];return [11,0,1]}
+function renderMonths(){
+ const [target,answer]=months[monthIndex%months.length],marked=markedMonths(answer);
+ const cal=`<div class="calendar"><div class="calendar-title">12 Months of the Year</div><div class="months">${monthNums.map((m,i)=>`<div class="month ${marked.includes(i)?"marked":""}"><strong>${m}</strong></div>`).join("")}</div></div>`;
+ game.innerHTML=`<div class="calendar-wrap"><div>${cal}<div class="prompt">What season is ${target} in?<div class="hint">Look at the red months. Say: “${target} is in ______.”</div></div></div><div><div class="season-options">${seasonChoices.map(([k,l])=>`<button class="season-option" data-season="${l}">${l}</button>`).join("")}</div></div></div><div class="feedback" id="feedback"></div><div class="actions"><button class="primary" id="next" disabled>Next →</button></div>`;
+ document.querySelectorAll("[data-season]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-season]").forEach(x=>x.classList.remove("correct","wrong"));let f=document.getElementById("feedback");if(b.dataset.season===answer){b.classList.add("correct");f.textContent="✓ Correct! "+target+" is in "+answer.toLowerCase()+".";scoreUp();document.getElementById("next").disabled=false}else{b.classList.add("wrong");f.textContent="Look at the red months and try again."}});
+ document.getElementById("next").onclick=()=>{monthIndex++;renderMonths()};
+}
+function renderBirthday(){
+ if(followIndex>0){renderBirthdayFollowup();return}
+ game.innerHTML=`<div class="follow-layout"><div>${img("birthday","Birthday celebration photograph","follow-photo")}</div><div><div class="prompt">When is your birthday?<div class="hint">Choose your birthday month and say: “My birthday is in ______.”</div></div><div class="monthgrid">${monthNums.map(m=>`<button class="monthpick" data-month="${m}">${m}</button>`).join("")}</div><div class="feedback" id="feedback"></div><div class="actions"><button class="primary" id="check" disabled>Next →</button></div></div></div>`;
+ document.querySelectorAll("[data-month]").forEach(b=>b.onclick=()=>{birthdayMonth=b.dataset.month;document.querySelectorAll("[data-month]").forEach(x=>x.classList.toggle("selected",x===b));document.getElementById("feedback").textContent="Say: My birthday is in "+birthdayMonth+".";document.getElementById("check").disabled=false});
+ document.getElementById("check").onclick=()=>{scoreUp();followIndex=1;renderBirthdayFollowup()};
+}
+const followups=[
+{q:"What do you usually do on your birthday?",hint:"I usually ______.",photo:"cake",alt:"Birthday cake"},
+{q:"Who do you celebrate your birthday with?",hint:"I celebrate with ______.",photo:"party",alt:"Birthday party decorations"},
+{q:"What birthday present would you like?",hint:"I would like ______.",photo:"gift",alt:"Wrapped birthday presents"},
+{q:"What is your favorite birthday food?",hint:"My favorite birthday food is ______.",photo:"cake",alt:"Birthday cake"}
+];
+function renderBirthdayFollowup(){let item=followups[(followIndex-1)%followups.length];game.innerHTML=`<div class="follow-layout"><div>${img(item.photo,item.alt,"follow-photo")}</div><div><div class="prompt">My birthday is in ${birthdayMonth}.</div><div class="prompt">${item.q}<div class="hint">${item.hint}</div></div><div class="feedback" id="feedback">Take your time and answer.</div><div class="actions"><button class="primary" id="nextFollow">${followIndex<followups.length?"Next question →":"Finish"}</button></div></div></div>`;
+ document.getElementById("nextFollow").onclick=()=>{if(followIndex<followups.length){followIndex++;renderBirthdayFollowup()}else{followIndex=0;birthdayMonth="";renderBirthday()}};
+}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{mission=Number(b.dataset.m);seasonIndex=0;weatherIndex=0;monthIndex=0;followIndex=0;
+ if(mission===0){seasonOrder.sort(()=>Math.random()-.5)}
+ render()});
+render();
+</script></body></html>
