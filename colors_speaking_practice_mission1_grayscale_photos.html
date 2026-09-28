@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 03 Colors - Speaking Practice</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fffaf0;color:#17364a;font-family:Arial,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:18px}
+.top{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:0 3px 12px #0001;margin-bottom:14px}
+.title{font-size:30px;font-weight:900;color:#13795b}
+.steps{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.step{padding:8px 14px;border-radius:999px;background:#e8eef1;font-weight:800}
+.step.active{background:#13795b;color:#fff}
+.screen{display:none;background:#fff;border-radius:20px;padding:22px;box-shadow:0 3px 12px #0001}
+.screen.active{display:block}
+h2{font-size:30px;margin:0 0 8px;color:#124b6b}
+.instruction{font-size:18px;color:#617582}
+.teacher{background:#f1f7fb;border-radius:16px;padding:18px;margin:16px 0}
+.teacher-label{font-weight:900;color:#13795b;font-size:18px}
+.question{font-size:30px;font-weight:900;margin-top:8px}
+.answer{font-size:19px;color:#617582;margin-top:7px}
+.hide{visibility:hidden}
+.game{position:relative;overflow:hidden;border-radius:18px}
+.game img{display:block;width:100%}
+.hot{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:16px}
+.hot:hover{background:#ffffff22}
+.status{min-height:32px;text-align:center;font-weight:900;font-size:18px;margin:12px}
+.btn{border:0;border-radius:12px;padding:12px 22px;background:#13795b;color:white;font-size:18px;font-weight:900;cursor:pointer}
+.btn.secondary{background:#e8eef1;color:#17364a}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.nav{display:flex;justify-content:center;gap:10px;margin-top:16px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.card{border:3px solid #dce7ec;background:#fff;border-radius:17px;padding:10px;cursor:pointer;text-align:center;min-height:220px}
+.card:hover{border-color:#13795b;transform:translateY(-2px)}
+.card img{width:100%;height:150px;object-fit:cover;border-radius:11px}.m1-photo{filter:grayscale(1)}.color-photo{filter:none}.m1-card.revealed{border-color:#13795b}
+.card-name{font-size:20px;font-weight:900;margin-top:8px}
+.m2q{font-size:34px;text-align:center;font-weight:900;color:#124b6b;margin:22px}
+.m2status,.m3status{min-height:34px;text-align:center;font-weight:900;font-size:19px;margin:12px}
+.m3q{font-size:34px;text-align:center;font-weight:900;background:#eef7fb;border-radius:16px;padding:20px;margin:18px 0}
+.colorChoices{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px}
+.colorChoice{border:3px solid #dce7ec;background:white;border-radius:14px;padding:14px 24px;font-size:22px;font-weight:900;cursor:pointer}
+.colorChoice:hover{border-color:#13795b}
+.big-question-list{display:grid;gap:14px;margin-top:18px}
+.big-question{font-size:30px;font-weight:900;background:#f0f7fb;border-radius:18px;padding:20px 24px;box-shadow:0 2px 7px #0001}
+.final{text-align:center;margin-top:18px}
+.credit{font-size:12px;color:#7b8a91;margin-top:12px}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}.question,.m2q,.m3q,.big-question{font-size:23px}.card img{height:130px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+<div class="title">Unit 03: Look! Colors!</div>
+<div class="steps">
+<span class="step active" id="step1">Mission 1</span>
+<span class="step" id="step2">Mission 2</span>
+<span class="step" id="step3">Mission 3</span>
+<span class="step" id="step4">Mission 4</span>
+</div>
+</div>
+
+<section class="screen active" id="s1">
+<h2>Mission 1: What Color Is It?</h2>
+<p class="instruction">Listen to the question. Say the answer. Then click the correct animal.</p>
+<div class="teacher">
+<div class="teacher-label">Teacher Question</div>
+<div class="question" id="q1"></div>
+<div class="answer hide" id="a1"></div>
+</div>
+<div class="cards" id="m1cards"></div>
+<div class="status" id="st1"></div>
+<div class="nav">
+<button class="btn secondary" id="showA">Show Expected Answer</button>
+<button class="btn" id="next1" disabled>Next</button>
+</div>
+</section>
+
+<section class="screen" id="s2">
+<h2>Mission 2: Find the Animal</h2>
+<p class="instruction">Find the animal that matches the color. Say the complete sentence.</p>
+<div class="m2q" id="m2q"></div>
+<div class="cards" id="m2cards"></div>
+<div class="m2status" id="m2status"></div>
+<div class="nav"><button class="btn" id="next2" disabled>Next</button></div>
+<div class="credit">Photos: Pexels free-to-use images.</div>
+</section>
+
+<section class="screen" id="s3">
+<h2>Mission 3: Colors & Animals</h2>
+<p class="instruction">Look at the animal. Answer the teacher's question. Try all five animals.</p>
+<div class="m3q" id="m3q"></div>
+<div class="cards" id="m3cards"></div>
+<div class="colorChoices" id="colorChoices"></div>
+<div class="m3status" id="m3status"></div>
+<div class="nav"><button class="btn" id="next3" disabled>Next</button></div>
+<div class="credit">Photos: Pexels free-to-use images.</div>
+</section>
+
+<section class="screen" id="s4">
+<h2>Mission 4: Personal Speaking</h2>
+<p class="instruction">Teacher asks. Encourage the student to answer in complete sentences.</p>
+<div class="big-question-list">
+<div class="big-question">1. What is your favorite color?</div>
+<div class="big-question">2. What is your favorite animal?</div>
+<div class="big-question">3. What color is your favorite animal?</div>
+<div class="big-question">4. What animal do you want to see?</div>
+<div class="big-question">5. Why do you like it?</div>
+</div>
+<div class="teacher" style="margin-top:18px"><div class="teacher-label">Teacher Focus</div><div style="font-size:18px;margin-top:6px">Ask “Why?” or “Tell me more.” when the student gives a short answer.</div></div>
+<div class="nav">
+<button class="btn secondary" id="tryAgain">Try Again</button>
+<button class="btn" id="next4">Next</button>
+</div>
+<div class="final" id="finalMsg"></div>
+</section>
+</div>
+
+<script>
+const animals=[
+ {name:"parrot",color:"green",url:"https://images.pexels.com/photos/1438163/pexels-photo-1438163.jpeg?cs=srgb&dl=pexels-werlleymeira-1438163.jpg&fm=jpg"},
+ {name:"lion",color:"yellow",url:"https://images.pexels.com/photos/7600161/pexels-photo-7600161.jpeg?cs=srgb&dl=pexels-david-atkins-11679899-7600161.jpg&fm=jpg"},
+ {name:"ant",color:"red",url:"https://images.pexels.com/photos/1104972/pexels-photo-1104972.jpeg?cs=srgb&dl=pexels-ekamelev-1104972.jpg&fm=jpg"},
+ {name:"fish",color:"blue",url:"https://images.pexels.com/photos/8970786/pexels-photo-8970786.jpeg?cs=srgb&dl=pexels-andromeda99-8970786.jpg&fm=jpg"},
+ {name:"polar bear",color:"white",url:"https://images.pexels.com/photos/53425/polar-bear-arctic-wildlife-snow-53425.jpeg?cs=srgb&dl=pexels-pixabay-53425.jpg&fm=jpg"}
+];
+const targetSentences=[
+ "The parrot is green.",
+ "The lion is yellow.",
+ "The ant is red.",
+ "The fish is blue.",
+ "The polar bear is white."
+];
+const $=id=>document.getElementById(id);
+let m1=0,m2=0,m3=0,selectedM3=null;
+
+function correctSound(){
+ try{
+  const C=window.AudioContext||window.webkitAudioContext,ctx=new C();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type="sine";o.frequency.setValueAtTime(880,ctx.currentTime);o.frequency.setValueAtTime(1175,ctx.currentTime+.1);
+  g.gain.setValueAtTime(.001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.02);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.28);
+  o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.3);
+ }catch(e){}
+}
+function go(n){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ $("s"+n).classList.add("active");
+ document.querySelectorAll(".step").forEach(x=>x.classList.remove("active"));
+ $("step"+n).classList.add("active");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* Mission 1: real animal photos start in grayscale and return to their original colors when answered correctly. */
+function renderM1(){
+ if(m1===5){
+  $("q1").textContent="Mission 1 complete!";
+  $("st1").textContent="🎉 All five animals are back in color.";
+  $("next1").disabled=false;
+  $("a1").classList.add("hide");
+  $("showA").textContent="Show Expected Answer";
+  return;
+ }
+ const x=animals[m1];
+ $("q1").textContent=`What color is the ${x.name}?`;
+ $("a1").textContent=`Expected answer: ${targetSentences[m1]}`;
+ $("a1").classList.add("hide");
+ $("showA").textContent="Show Expected Answer";
+ $("st1").textContent="Student answers → click the correct animal.";
+ $("next1").disabled=true;
+ $("m1cards").innerHTML=animals.map((a,i)=>`
+  <button class="card m1-card ${i<m1?'revealed':''}" data-i="${i}">
+   <img src="${a.url}" alt="${a.name}" class="m1-photo ${i<m1?'color-photo':''}">
+   <div class="card-name">${a.name}</div>
+  </button>`).join("");
+ document.querySelectorAll("#m1cards .card").forEach(b=>b.onclick=()=>{
+  const i=Number(b.dataset.i);
+  if(i===m1){
+   const img=b.querySelector("img");
+   img.classList.remove("m1-photo");
+   img.classList.add("color-photo");
+   b.classList.add("revealed");
+   correctSound();
+   $("st1").textContent=`✓ Correct! ${targetSentences[i]}`;
+   m1++;
+   setTimeout(renderM1,350);
+  }else{
+   $("st1").textContent="Try again. Choose the animal from the question.";
+  }
+ });
+}
+$("showA").onclick=()=>{
+ $("a1").classList.toggle("hide");
+ $("showA").textContent=$("a1").classList.contains("hide")?"Show Expected Answer":"Hide Expected Answer";
+};
+$("next1").onclick=()=>go(2);
+renderM1();
+
+/* Mission 2: answer positions are 1-4-3-5-2 */
+const m2Order=[0,3,2,4,1];
+function renderM2(){
+ const x=animals[m2Order[m2]];
+ $("m2q").textContent=`Find the ${x.color} animal.`;
+ $("m2cards").innerHTML=animals.map((a,i)=>`
+  <button class="card" data-i="${i}">
+   <img src="${a.url}" alt="${a.name}">
+   <div class="card-name">${a.name}</div>
+  </button>`).join("");
+ $("m2status").textContent="Student answers → click the correct animal.";
+ $("next2").disabled=true;
+ document.querySelectorAll("#m2cards .card").forEach(b=>b.onclick=()=>{
+  const i=Number(b.dataset.i);
+  if(i===m2Order[m2]){
+   correctSound();$("m2status").textContent=`✓ Correct! The ${x.name} is ${x.color}.`;$("next2").disabled=false;
+  }else{
+   $("m2status").textContent="Try again.";
+  }
+ });
+}
+$("next2").onclick=()=>{m2++;if(m2<5)renderM2();else go(3);};
+renderM2();
+
+/* Mission 3: all five animals, no color labels under cards */
+function renderM3(){
+ const x=animals[m3];
+ $("m3q").textContent=`What color is the ${x.name}?`;
+ $("m3cards").innerHTML=animals.map((a,i)=>`
+  <button class="card" data-i="${i}">
+   <img src="${a.url}" alt="${a.name}">
+   <div class="card-name">${a.name}</div>
+  </button>`).join("");
+ $("colorChoices").innerHTML=["green","yellow","red","blue","white"].map(c=>`<button class="colorChoice" data-color="${c}">${c}</button>`).join("");
+ $("m3status").textContent="Choose the animal, then say its color.";
+ $("next3").disabled=true;
+ selectedM3=null;
+ document.querySelectorAll("#m3cards .card").forEach(b=>b.onclick=()=>{
+  selectedM3=Number(b.dataset.i);
+  $("m3status").textContent=`Now answer: What color is the ${animals[selectedM3].name}?`;
+ });
+ document.querySelectorAll("#colorChoices .colorChoice").forEach(b=>b.onclick=()=>{
+  if(selectedM3===null){$("m3status").textContent="Choose an animal first.";return;}
+  const c=b.dataset.color, target=animals[selectedM3];
+  if(selectedM3===m3 && c===target.color){
+   correctSound();$("m3status").textContent=`✓ Correct! ${targetSentences[m3]}`;$("next3").disabled=false;
+  }else{
+   $("m3status").textContent="Try again.";
+  }
+ });
+}
+$("next3").onclick=()=>{m3++;if(m3<5)renderM3();else go(4);};
+renderM3();
+
+/* Mission 4 */
+$("tryAgain").onclick=()=>{
+ $("finalMsg").textContent="Let's try the five questions again!";
+};
+$("next4").onclick=()=>{
+ $("finalMsg").textContent="🎉 Great job! You completed all four missions.";
+};
+</script>
+</body>
+</html>
