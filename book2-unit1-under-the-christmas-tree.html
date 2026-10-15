@@ -79,6 +79,8 @@ img.ph{object-fit:cover;border-radius:16px;display:block}
 .zin .ph,.zin .pl{width:min(72vh,80vw);max-width:760px;border-radius:12px}
 .zt{margin-top:8px;font-weight:800;color:#666}
 
+#t,#tb{display:none!important}
+
 </style></head><body>
 <header><div id="tabs" style="display:flex;gap:6px"></div><div id="h"></div><div id="t">6:00</div><button id="tb" onclick="tog()">Start</button><button class="sm" onclick="tgl()">Teacher tips</button><button id="nx" onclick="go(cur+1)">Next</button><button id="fn" onclick="fin()" style="display:none">Finish</button></header>
 <main id="st"></main>
@@ -90,7 +92,7 @@ const IMG={"hat": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAw
 const LBL={"hat": "hat", "watch": "watch", "shirt": "shirt", "bone": "bone", "aunt": "aunt", "uncle": "uncle", "cousin": "cousin", "dog": "dog"};
 function ph(k,c){return IMG[k]?'<img class="ph '+(c||'')+'" src="'+IMG[k]+'" alt="">':'<div class="pl '+(c||'')+'"><span>'+(LBL[k]||k)+'</span></div>'}
 function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-const DUR=[180, 300, 240];
+const DUR=[180, 180, 360];
 let cur=0,secs=0,iv=null;
 function fmt(){$('#t').textContent=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');$('#t').classList.toggle('low',secs<=30)}
 function tog(){if(iv){clearInterval(iv);iv=null;$('#tb').textContent='Start'}else{iv=setInterval(()=>{secs>0?(secs--,fmt()):tog()},1000);$('#tb').textContent='Pause'}}
